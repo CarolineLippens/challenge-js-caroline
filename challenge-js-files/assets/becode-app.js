@@ -10,7 +10,15 @@ What does this script do ?
 créer des graphiques
 
 */
+
+//création emplacement 3eme graphique
+
+
+
+
+
 //création du tableau
+let x = document.getElementById("mw-content-text"); //ligne 616 parent le plus proche du tableau
 let emp = document.getElementById('table1');
 let graph1 = document.createElement("div");
 graph1.id="dimple1";
@@ -63,10 +71,27 @@ chart.addSeries("Pays", dimple.plot.line);
 chart.addLegend(0,10, 1000, 250);
 chart.draw();
 
-
-
-
-
+let tuto = document.createElement("p");
+        tuto.innerHTML = "Cliquez sur les pays que vous désirez comparer dans la légende du graphique pour les afficher sur le graphique ou les effacer.";
+        x.insertBefore(tuto,table1);
+        //création de "boutons" sur base de la légende dimple.
+        let btn = document.querySelectorAll("g.dimple-legend");
+        for (i=0;i<btn.length;i++){
+            btn[i].setAttribute("onclick","afficher("+ i +")");
+        }
+        //définir les courbes a afficher sur le graphique et les effacer de base
+        let courbe = document.querySelectorAll("g.dimple-series-group-0 path");
+        for (i=0;i<courbe.length;i++){
+            courbe[i].style.visibility = "hidden";
+        }
+        //création de la fonction afficher (ou pas)
+        let afficher = (i) =>{
+            if (courbe[i].style.visibility == "visible"){
+                courbe[i].style.visibility = "hidden";
+            } else {
+                courbe[i].style.visibility = "visible";
+            }
+        }
 
 
 //création du tableau
@@ -75,7 +100,6 @@ let graph2 = document.createElement("div");
 graph2.id="dimple2";
 table2.parentNode.insertBefore(graph2, table2);
 //
-
 //prendre données
 let tbody2 = table2.getElementsByTagName("tbody"); //prend les element tbody
 let tr2 = tbody2[0].getElementsByTagName("tr"); //prend les tr dans le tbody 0
@@ -112,6 +136,11 @@ for(pp=0; pp<donnees2.length;pp++){
     }
 }
 }
+
+
+
+
+
 //créa graph
 let svg2 = dimple.newSvg("#dimple2", 800, 600);
 let chart2 = new dimple.chart(svg2, data2);
@@ -120,3 +149,65 @@ chart2.addMeasureAxis("y", "population_carcérale");
 chart2.addSeries("Pays", dimple.plot.bar);
 chart2.addLegend(60,0, 800, 80);
 chart2.draw();
+
+
+
+
+
+
+
+
+
+//placer le graph3
+let graph3 = document.createElement("div");
+graph3.id="dimple3";
+bodyContent.parentNode.insertBefore(graph3, bodyContent);
+let databecode =[];
+let data5 = [];
+function loadDoc() {
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+if (this.readyState == 4 && this.status == 200) {
+databecode = JSON.parse(this.responseText);
+
+function updateChart() {
+        svg10.remove()
+        xhttp.open("GET", "https://inside.becode.org/api/v1/data/random.json", true);
+        xhttp.send();
+        data10.push(y)
+        data5 = data5.concat(databecode)
+     
+       //console.log(data5)
+}
+
+setTimeout(function(){updateChart()}, 5000);
+
+    var svg10 = dimple.newSvg("#dimple3", 800, 600);
+    var data10 = []; 
+    for (let i = 0; i < data5.length; i++) {
+        let y = {"Nombre":data5[i][0], "Value":data5[i][1]};
+        data10.push(y);  
+        console.log(data10)
+           
+    }
+    
+
+    var chart = new dimple.chart(svg10, data10);
+    var x = chart.addCategoryAxis("x", "Nombre");
+    var y1 = chart.addMeasureAxis("y", "Valeur" );
+    var y2 = chart.addMeasureAxis("y", "Value");
+    y1.overrideMin = -30;
+    y1.overrideMax = 30;
+    y2.overrideMin = -30;
+    y2.overrideMax = 30;
+    y2.hidden = true;
+    chart.addSeries(null, dimple.plot.bar, [x, y2]);
+    chart.draw();
+          }
+        };
+
+xhttp.open("GET", "https://inside.becode.org/api/v1/data/random.json", true);
+xhttp.send();
+
+}
+loadDoc();
